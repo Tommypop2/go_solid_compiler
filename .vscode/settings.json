@@ -1,0 +1,7 @@
+{
+	"gopls": { "ui.semanticTokens": true },
+	"go.toolsEnvVars": {
+		"GOOS": "js",
+		"GOARCH": "wasm"
+	}
+}
