@@ -27,6 +27,7 @@ func uid(str string) int {
 var importMap map[string]interface{}
 var fileMap map[string]string
 var EntryPoint string = "./main"
+var LogLevel api.LogLevel = api.LogLevelInfo
 var replPlugin = api.Plugin{
 	Name: "replPlugin",
 	Setup: func(build api.PluginBuild) {
@@ -92,7 +93,7 @@ func build() js.Func {
 			Bundle:      true,
 			Write:       false,
 			Platform:    api.PlatformBrowser,
-			LogLevel:    api.LogLevelInfo,
+			LogLevel:    LogLevel,
 			Plugins:     []api.Plugin{replPlugin},
 			Format:      api.FormatESModule,
 		})
@@ -112,10 +113,18 @@ func setEntryPoint() js.Func {
 		return true
 	})
 }
+func setLogLevel() js.Func {
+	return js.FuncOf(func(this js.Value, args []js.Value) any {
+		newLogLevel := args[0].Int()
+		LogLevel = api.LogLevel(newLogLevel)
+		return true
+	})
+}
 func main() {
 	js.Global().Set("build", build())
 	js.Global().Set("getImportMap", getImportMap())
 	js.Global().Set("setEntryPoint", setEntryPoint())
+	js.Global().Set("setLogLevel", setLogLevel())
 	js.Global().Call("onWasmLoaded")
 	<-make(chan bool)
 }
